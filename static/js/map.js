@@ -146,11 +146,25 @@ function initMap() { // eslint-disable-line no-unused-vars
     // Enable clustering.
     var clusterOptions = {
         imagePath: 'static/images/cluster/m',
-        maxZoom: 14
+        maxZoom: 15
     }
 
     markerCluster = new MarkerClusterer(map, [], clusterOptions)
-    window.markerCluster = markerCluster
+    const oldRepaint = markerCluster.repaint
+    markerCluster.repaint = function rp() {
+        console.trace('Repaint!')
+        oldRepaint.apply(this, arguments)
+    }
+    const oldViewport = markerCluster.resetViewport
+    markerCluster.resetViewport = function () {
+        console.trace('Viewport!')
+        oldViewport.apply(this, arguments)
+    }
+    const oldRedraw = markerCluster.redraw
+    markerCluster.redraw = function () {
+        console.trace('Redraw!')
+        oldRedraw.apply(this, arguments)
+    }
 
     var styleNoLabels = new google.maps.StyledMapType(noLabelsStyle, {
         name: 'No Labels'
@@ -1640,6 +1654,7 @@ function updateSpawnPoints() {
 
 function updateMap() {
     loadRawData().done(function (result) {
+        clearStaleMarkers()
         processPokemons(result.pokemons)
         $.each(result.pokestops, processPokestop)
         $.each(result.gyms, processGym)
@@ -1651,11 +1666,6 @@ function updateMap() {
         showInBoundsMarkers(mapData.pokestops, 'pokestop')
         showInBoundsMarkers(mapData.scanned, 'scanned')
         showInBoundsMarkers(mapData.spawnpoints, 'inbound')
-        clearStaleMarkers()
-
-        // We're done with our tasks. Redraw.
-        markerCluster.resetViewport()
-        markerCluster.redraw()
 
         updateScanned()
         updateSpawnPoints()
