@@ -973,6 +973,10 @@ var StoreOptions = {
     'zoomLevel': {
         default: 16,
         type: StoreTypes.Number
+    },
+    'maxClusterZoomLevel': {
+        default: 14,
+        type: StoreTypes.Number
     }
 }
 
