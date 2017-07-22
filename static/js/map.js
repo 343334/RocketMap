@@ -150,21 +150,6 @@ function initMap() { // eslint-disable-line no-unused-vars
     }
 
     markerCluster = new MarkerClusterer(map, [], clusterOptions)
-    const oldRepaint = markerCluster.repaint
-    markerCluster.repaint = function rp() {
-        console.trace('Repaint!')
-        oldRepaint.apply(this, arguments)
-    }
-    const oldViewport = markerCluster.resetViewport
-    markerCluster.resetViewport = function () {
-        console.trace('Viewport!')
-        oldViewport.apply(this, arguments)
-    }
-    const oldRedraw = markerCluster.redraw
-    markerCluster.redraw = function () {
-        console.trace('Redraw!')
-        oldRedraw.apply(this, arguments)
-    }
 
     var styleNoLabels = new google.maps.StyledMapType(noLabelsStyle, {
         name: 'No Labels'
